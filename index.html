@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finagg Loan Calculator</title>
+  <link rel="icon" href="Finagg Logo.png" type="image/png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen bg-white font-sans text-slate-900 antialiased">
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-5 sm:text-left">
+        <img
+          src="Finagg Logo.png"
+          alt="Finagg"
+          width="120"
+          height="40"
+          loading="lazy"
+          decoding="async"
+          class="h-10 w-auto shrink-0 object-contain"
+        />
+        <div class="max-w-2xl text-center sm:text-left">
+          <p class="text-sm font-medium uppercase tracking-wide text-slate-500">Finagg Loan Calculator</p>
+          <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Loan Disbursement Calculator
+          </h1>
+          <p class="mt-3 text-base text-slate-500">
+            Calculate your loan disbursement amount, compare scenarios, and track history
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <nav
+      class="flex gap-1 rounded-xl bg-slate-100 p-1 shadow-inner"
+      role="tablist"
+      aria-label="Main sections"
+    >
+      <button
+        type="button"
+        role="tab"
+        id="tab-calculator"
+        aria-selected="true"
+        aria-controls="panel-calculator"
+        data-tab="calculator"
+        class="tab-btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 bg-white text-slate-900 shadow-sm"
+      >
+        <svg class="tab-ic h-4 w-4 shrink-0 opacity-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18a2.25 2.25 0 01-2.25 2.25h-3a2.25 2.25 0 01-2.25-2.25V15.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25zm3.75 0a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25zm-7.5 3.75a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25zm3.75 0a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z" />
+        </svg>
+        <span>Calculator</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        id="tab-compare"
+        aria-selected="false"
+        aria-controls="panel-compare"
+        data-tab="compare"
+        class="tab-btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 bg-slate-200/80 text-slate-600 hover:bg-slate-200"
+      >
+        <svg class="tab-ic h-4 w-4 shrink-0 opacity-80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+        <span>Compare</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        id="tab-history"
+        aria-selected="false"
+        aria-controls="panel-history"
+        data-tab="history"
+        class="tab-btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 bg-slate-200/80 text-slate-600 hover:bg-slate-200"
+      >
+        <svg class="tab-ic h-4 w-4 shrink-0 opacity-80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>History</span>
+      </button>
+    </nav>
+
+    <div class="mt-6">
+      <div
+        id="panel-calculator"
+        role="tabpanel"
+        aria-labelledby="tab-calculator"
+        data-panel="calculator"
+        class="panel rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-200"
+      >
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Calculate Loan</h2>
+            <form id="loan-calculator-form" class="mt-5 space-y-4" novalidate>
+              <div>
+                <label for="input-sanction" class="mb-1.5 block text-xs font-semibold tracking-wide text-slate-600">
+                  SANCTION LIMIT (₹)
+                </label>
+                <div
+                  class="group flex rounded-lg border border-slate-300 bg-white shadow-sm transition-all duration-200 hover:border-slate-400 hover:shadow-md focus-within:border-slate-400 focus-within:shadow-md focus-within:ring-2 focus-within:ring-slate-200"
+                >
+                  <span class="pointer-events-none flex items-center border-r border-slate-200/80 pl-3 pr-2 text-slate-400" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m0 0a2.25 2.25 0 012.25-2.25H15a3 3 0 116 0h4.5A2.25 2.25 0 0121 9v3" />
+                    </svg>
+                  </span>
+                  <input
+                    id="input-sanction"
+                    name="sanction"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    min="0"
+                    placeholder="e.g. 1000000"
+                    class="min-w-0 flex-1 rounded-r-lg border-0 bg-transparent py-2.5 pl-2 pr-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </div>
+              <div>
+                <label for="input-roi" class="mb-1.5 block text-xs font-semibold tracking-wide text-slate-600">
+                  ROI (ANNUAL %)
+                </label>
+                <div
+                  class="group flex rounded-lg border border-slate-300 bg-white shadow-sm transition-all duration-200 hover:border-slate-400 hover:shadow-md focus-within:border-slate-400 focus-within:shadow-md focus-within:ring-2 focus-within:ring-slate-200"
+                >
+                  <span class="pointer-events-none flex items-center border-r border-slate-200/80 pl-3 pr-2 text-slate-400" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                    </svg>
+                  </span>
+                  <input
+                    id="input-roi"
+                    name="roi"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    min="0"
+                    placeholder="e.g. 12.5"
+                    class="min-w-0 flex-1 rounded-r-lg border-0 bg-transparent py-2.5 pl-2 pr-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </div>
+              <div>
+                <label for="input-tenure" class="mb-1.5 block text-xs font-semibold tracking-wide text-slate-600">
+                  TENURE (DAYS)
+                </label>
+                <div
+                  class="group flex rounded-lg border border-slate-300 bg-white shadow-sm transition-all duration-200 hover:border-slate-400 hover:shadow-md focus-within:border-slate-400 focus-within:shadow-md focus-within:ring-2 focus-within:ring-slate-200"
+                >
+                  <span class="pointer-events-none flex items-center border-r border-slate-200/80 pl-3 pr-2 text-slate-400" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 012.25 2.25v7.5" />
+                    </svg>
+                  </span>
+                  <input
+                    id="input-tenure"
+                    name="tenure"
+                    type="number"
+                    inputmode="numeric"
+                    step="1"
+                    min="0"
+                    placeholder="e.g. 90"
+                    class="min-w-0 flex-1 rounded-r-lg border-0 bg-transparent py-2.5 pl-2 pr-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </div>
+              <p id="calculator-form-error" class="hidden text-sm text-red-600" role="alert"></p>
+              <button
+                type="submit"
+                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-orange-600 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
+              >
+                <span>Calculate</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Calculation Results</h2>
+            <div class="mt-5 space-y-3">
+              <div
+                class="group relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-50/80 px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <svg
+                  class="absolute right-3 top-3 h-5 w-5 text-slate-300 transition-colors duration-200 group-hover:text-slate-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6v11.25A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18.75V9z" />
+                </svg>
+                <div class="relative pr-8">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Sanction limit</p>
+                  <p id="result-sanction" class="mt-1 text-lg font-semibold tabular-nums text-slate-900">—</p>
+                </div>
+              </div>
+              <div
+                class="group relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-50/80 px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <svg
+                  class="absolute right-3 top-3 h-5 w-5 text-slate-300 transition-colors duration-200 group-hover:text-slate-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="relative pr-8">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Tenure (days)</p>
+                  <p id="result-tenure" class="mt-1 text-lg font-semibold tabular-nums text-slate-900">—</p>
+                </div>
+              </div>
+              <div
+                class="group relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-green-50/40 via-white to-slate-50/80 px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <svg
+                  class="absolute right-3 top-3 h-5 w-5 text-green-600/35 transition-colors duration-200 group-hover:text-green-600/50"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="relative pr-8">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Disbursed amount</p>
+                  <p id="result-disbursed" class="mt-1 text-lg font-semibold tabular-nums text-green-600">—</p>
+                </div>
+              </div>
+              <div
+                class="group relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-orange-50/50 via-white to-slate-50/80 px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <svg
+                  class="absolute right-3 top-3 h-5 w-5 text-orange-500/40 transition-colors duration-200 group-hover:text-orange-500/55"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+                </svg>
+                <div class="relative pr-8">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Interest amount</p>
+                  <p id="result-interest" class="mt-1 text-lg font-semibold tabular-nums text-orange-600">—</p>
+                </div>
+              </div>
+              <div
+                class="group relative overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-100/80 via-white to-orange-50/30 px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md"
+              >
+                <svg
+                  class="absolute right-3 top-3 h-5 w-5 text-slate-400 transition-colors duration-200 group-hover:text-slate-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+                </svg>
+                <div class="relative pr-8">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Total (disbursed + interest)
+                  </p>
+                  <p id="result-total" class="mt-1 text-xl font-bold tabular-nums text-slate-900">—</p>
+                  <p class="mt-2 text-xs text-slate-500">Equals sanction limit when inputs are valid.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="panel-compare"
+        role="tabpanel"
+        aria-labelledby="tab-compare"
+        data-panel="compare"
+        class="panel hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-200"
+      >
+        <h2 class="text-lg font-semibold text-slate-900">Compare Loan Scenarios</h2>
+        <div id="compare-scenarios-container" class="mt-6 space-y-4"></div>
+        <p id="compare-error" class="mt-4 hidden text-sm text-red-600" role="alert"></p>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <button
+            type="button"
+            id="compare-add-scenario"
+            class="rounded-lg border-2 border-green-600 bg-white px-4 py-2.5 text-sm font-semibold text-green-600 shadow-sm transition-all duration-200 hover:bg-green-50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+          >
+            Add Scenario
+          </button>
+          <button
+            type="button"
+            id="compare-run"
+            class="rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-orange-600 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
+          >
+            Compare
+          </button>
+        </div>
+        <div id="compare-results-section" class="mt-8 hidden">
+          <h3 class="text-base font-semibold text-slate-900">Comparison results</h3>
+          <p class="mt-1 text-xs text-slate-500">
+            Badges mark the scenario with the highest disbursed amount and the lowest interest.
+          </p>
+          <div
+            id="compare-results-grid"
+            class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        id="panel-history"
+        role="tabpanel"
+        aria-labelledby="tab-history"
+        data-panel="history"
+        class="panel hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow duration-200"
+      >
+        <h2 class="text-lg font-semibold text-slate-900">Calculation History</h2>
+        <p id="history-empty" class="mt-6 hidden text-center text-sm text-slate-500">
+          No calculations yet. Run one from the Calculator tab.
+        </p>
+        <div id="history-table-wrap" class="mt-6 hidden overflow-x-auto">
+          <table class="w-full min-w-[36rem] border-collapse border-0 text-left text-sm">
+            <thead>
+              <tr class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th scope="col" class="border-0 pb-3 pr-4 font-medium">Sanction</th>
+                <th scope="col" class="border-0 pb-3 pr-4 font-medium">ROI / TENURE</th>
+                <th scope="col" class="border-0 pb-3 pr-4 font-medium">Disbursed</th>
+                <th scope="col" class="border-0 pb-3 pr-4 font-medium">Interest</th>
+                <th scope="col" class="border-0 pb-3 pr-4 font-medium">Date</th>
+                <th scope="col" class="border-0 pb-3 pl-2 text-right font-medium">
+                  <span class="sr-only">Delete</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody" class="text-slate-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var HISTORY_KEY = 'finagg-loan-calc-history';
+
+      function loadHistory() {
+        try {
+          var raw = localStorage.getItem(HISTORY_KEY);
+          if (!raw) return [];
+          var parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [];
+        }
+      }
+
+      function saveHistory(arr) {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+      }
+
+      function formatCurrencyShort(n) {
+        return (
+          '₹' +
+          n.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+
+      function formatDateDMY(isoString) {
+        var d = new Date(isoString);
+        var day = String(d.getDate()).padStart(2, '0');
+        var month = String(d.getMonth() + 1).padStart(2, '0');
+        var year = d.getFullYear();
+        return day + '/' + month + '/' + year;
+      }
+
+      function formatRoiTenure(roi, tenure) {
+        var r =
+          Math.abs(roi - Math.round(roi)) < 1e-9
+            ? String(Math.round(roi))
+            : String(roi);
+        var t =
+          Math.abs(tenure - Math.round(tenure)) < 1e-9
+            ? String(Math.round(tenure))
+            : String(tenure);
+        return r + '% / ' + t + 'd';
+      }
+
+      function renderHistory() {
+        var tbody = document.getElementById('history-tbody');
+        var emptyEl = document.getElementById('history-empty');
+        var wrapEl = document.getElementById('history-table-wrap');
+        if (!tbody || !emptyEl || !wrapEl) return;
+
+        var items = loadHistory();
+        tbody.innerHTML = '';
+
+        if (items.length === 0) {
+          emptyEl.classList.remove('hidden');
+          wrapEl.classList.add('hidden');
+          return;
+        }
+
+        emptyEl.classList.add('hidden');
+        wrapEl.classList.remove('hidden');
+
+        items.forEach(function (item) {
+          var tr = document.createElement('tr');
+          tr.className = 'border-0';
+          tr.innerHTML =
+            '<td class="border-0 py-3 pr-4 align-middle tabular-nums">' +
+            formatCurrencyShort(item.sanctionLimit) +
+            '</td>' +
+            '<td class="border-0 py-3 pr-4 align-middle tabular-nums text-slate-600">' +
+            formatRoiTenure(item.roi, item.tenure) +
+            '</td>' +
+            '<td class="border-0 py-3 pr-4 align-middle tabular-nums font-medium text-green-600">' +
+            formatCurrencyShort(item.disbursedAmount) +
+            '</td>' +
+            '<td class="border-0 py-3 pr-4 align-middle tabular-nums font-medium text-orange-600">' +
+            formatCurrencyShort(item.interestAmount) +
+            '</td>' +
+            '<td class="border-0 py-3 pr-4 align-middle tabular-nums text-slate-600">' +
+            formatDateDMY(item.savedAt) +
+            '</td>' +
+            '<td class="border-0 py-3 pl-2 text-right align-middle">' +
+            '<button type="button" class="inline-flex rounded-md p-1.5 text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400" data-delete-id="' +
+            item.id +
+            '" aria-label="Delete this entry">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />' +
+            '</svg></button></td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      function appendHistoryEntry(data) {
+        var arr = loadHistory();
+        arr.unshift({
+          id:
+            Date.now().toString(36) +
+            '-' +
+            Math.random().toString(36).slice(2, 10),
+          sanctionLimit: data.sanctionLimit,
+          roi: data.roi,
+          tenure: data.tenure,
+          disbursedAmount: data.disbursedAmount,
+          interestAmount: data.interestAmount,
+          savedAt: new Date().toISOString(),
+        });
+        saveHistory(arr);
+        renderHistory();
+      }
+
+      function deleteHistoryEntry(id) {
+        var arr = loadHistory().filter(function (x) {
+          return x.id !== id;
+        });
+        saveHistory(arr);
+        renderHistory();
+      }
+
+      function initHistoryTable() {
+        var tbody = document.getElementById('history-tbody');
+        if (!tbody || tbody.dataset.bound === '1') return;
+        tbody.dataset.bound = '1';
+        tbody.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-delete-id]');
+          if (!btn) return;
+          deleteHistoryEntry(btn.getAttribute('data-delete-id'));
+        });
+      }
+
+      window.loanCalcHistory = {
+        append: appendHistoryEntry,
+        render: renderHistory,
+      };
+
+      initHistoryTable();
+      renderHistory();
+    })();
+
+    (function () {
+      var tabs = document.querySelectorAll('.tab-btn');
+      var panels = document.querySelectorAll('.panel');
+
+      var activeClasses = 'bg-white text-slate-900 shadow-sm';
+      var inactiveClasses = 'bg-slate-200/80 text-slate-600 hover:bg-slate-200 shadow-none';
+
+      function setTab(tabId) {
+        tabs.forEach(function (btn) {
+          var isActive = btn.getAttribute('data-tab') === tabId;
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          btn.className =
+            'tab-btn inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 ' +
+            (isActive ? activeClasses : inactiveClasses);
+        });
+
+        panels.forEach(function (panel) {
+          var match = panel.getAttribute('data-panel') === tabId;
+          panel.classList.toggle('hidden', !match);
+        });
+
+        if (tabId === 'history' && window.loanCalcHistory) {
+          window.loanCalcHistory.render();
+        }
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          setTab(btn.getAttribute('data-tab'));
+        });
+      });
+    })();
+
+    (function () {
+      var form = document.getElementById('loan-calculator-form');
+      if (!form) return;
+
+      var sanctionInput = document.getElementById('input-sanction');
+      var roiInput = document.getElementById('input-roi');
+      var tenureInput = document.getElementById('input-tenure');
+      var errorEl = document.getElementById('calculator-form-error');
+
+      var elSanction = document.getElementById('result-sanction');
+      var elTenure = document.getElementById('result-tenure');
+      var elDisbursed = document.getElementById('result-disbursed');
+      var elInterest = document.getElementById('result-interest');
+      var elTotal = document.getElementById('result-total');
+
+      function formatCurrency(n) {
+        return (
+          '₹ ' +
+          n.toLocaleString('en-IN', {
+            minimumFractionDigits: 4,
+            maximumFractionDigits: 4,
+          })
+        );
+      }
+
+      function formatTenureDays(n) {
+        return n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+      }
+
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove('hidden');
+      }
+
+      function clearError() {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearError();
+
+        var sanctionLimit = parseFloat(sanctionInput.value);
+        var roi = parseFloat(roiInput.value);
+        var tenure = parseFloat(tenureInput.value);
+
+        if (!isFinite(sanctionLimit) || !isFinite(roi) || !isFinite(tenure)) {
+          showError('Please enter valid numbers for all fields.');
+          return;
+        }
+        if (sanctionLimit < 0 || roi < 0 || tenure < 0) {
+          showError('Values cannot be negative.');
+          return;
+        }
+
+        var rate = roi / 100;
+        var denominator = 1 + (rate * tenure) / 365;
+        if (denominator === 0) {
+          showError('Invalid combination: divisor is zero.');
+          return;
+        }
+
+        var disbursedAmount = sanctionLimit / denominator;
+        var interestAmount = sanctionLimit - disbursedAmount;
+        var total = disbursedAmount + interestAmount;
+
+        elSanction.textContent = formatCurrency(sanctionLimit);
+        elTenure.textContent = formatTenureDays(tenure);
+        elDisbursed.textContent = formatCurrency(disbursedAmount);
+        elInterest.textContent = formatCurrency(interestAmount);
+        elTotal.textContent = formatCurrency(total);
+
+        if (window.loanCalcHistory) {
+          window.loanCalcHistory.append({
+            sanctionLimit: sanctionLimit,
+            roi: roi,
+            tenure: tenure,
+            disbursedAmount: disbursedAmount,
+            interestAmount: interestAmount,
+          });
+        }
+      });
+    })();
+
+    (function () {
+      var container = document.getElementById('compare-scenarios-container');
+      var addBtn = document.getElementById('compare-add-scenario');
+      var runBtn = document.getElementById('compare-run');
+      var errorEl = document.getElementById('compare-error');
+      var resultsSection = document.getElementById('compare-results-section');
+      var resultsGrid = document.getElementById('compare-results-grid');
+      if (!container || !addBtn || !runBtn || !errorEl || !resultsSection || !resultsGrid) return;
+
+      var scenarioCount = 0;
+      var inputClass =
+        'compare-field w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-all duration-200 placeholder:text-slate-400 hover:border-slate-400 hover:shadow-sm focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200';
+
+      function formatCompareCurrency(n) {
+        return (
+          '₹' +
+          n.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+
+      function createScenarioRow(num) {
+        var row = document.createElement('div');
+        row.className =
+          'compare-scenario-row rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md';
+        row.setAttribute('data-scenario-index', String(num));
+
+        var outer = document.createElement('div');
+        outer.className = 'flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end';
+
+        var title = document.createElement('p');
+        title.className = 'scenario-title shrink-0 text-sm font-semibold text-slate-900 sm:w-28';
+        title.textContent = 'Scenario ' + num;
+
+        var grid = document.createElement('div');
+        grid.className = 'grid min-w-0 flex-1 grid-cols-1 gap-3 sm:grid-cols-3';
+
+        function addField(labelText, fieldClass, placeholder) {
+          var wrap = document.createElement('div');
+          var lbl = document.createElement('label');
+          lbl.className = 'mb-1 block text-xs font-medium text-slate-600';
+          lbl.textContent = labelText;
+          var input = document.createElement('input');
+          input.type = 'number';
+          input.step = 'any';
+          input.min = '0';
+          input.placeholder = placeholder;
+          input.className = inputClass + ' ' + fieldClass;
+          wrap.appendChild(lbl);
+          wrap.appendChild(input);
+          grid.appendChild(wrap);
+        }
+
+        addField('Sanction Limit', 'compare-sanction', 'e.g. 100000');
+        addField('ROI (%)', 'compare-roi', 'e.g. 12');
+        addField('Tenure (Days)', 'compare-tenure', 'e.g. 90');
+
+        outer.appendChild(title);
+        outer.appendChild(grid);
+        row.appendChild(outer);
+        return row;
+      }
+
+      function addScenario() {
+        scenarioCount += 1;
+        container.appendChild(createScenarioRow(scenarioCount));
+      }
+
+      function showCompareError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove('hidden');
+        resultsSection.classList.add('hidden');
+      }
+
+      function clearCompareError() {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+      }
+
+      function runCompare() {
+        clearCompareError();
+        var rows = container.querySelectorAll('.compare-scenario-row');
+        var scenarios = [];
+        var errors = [];
+
+        rows.forEach(function (row) {
+          var num = row.getAttribute('data-scenario-index') || '?';
+          var sEl = row.querySelector('.compare-sanction');
+          var rEl = row.querySelector('.compare-roi');
+          var tEl = row.querySelector('.compare-tenure');
+          if (!sEl || !rEl || !tEl) return;
+
+          var s = parseFloat(sEl.value);
+          var r = parseFloat(rEl.value);
+          var t = parseFloat(tEl.value);
+
+          if (!isFinite(s) || !isFinite(r) || !isFinite(t)) {
+            errors.push('Scenario ' + num + ': enter valid numbers in all fields.');
+            return;
+          }
+          if (s < 0 || r < 0 || t < 0) {
+            errors.push('Scenario ' + num + ': values cannot be negative.');
+            return;
+          }
+
+          var rate = r / 100;
+          var denominator = 1 + (rate * t) / 365;
+          if (denominator === 0) {
+            errors.push('Scenario ' + num + ': invalid combination (divisor is zero).');
+            return;
+          }
+
+          var disbursed = s / denominator;
+          var interest = s - disbursed;
+          scenarios.push({
+            num: num,
+            sanction: s,
+            roi: r,
+            tenure: t,
+            disbursed: disbursed,
+            interest: interest,
+          });
+        });
+
+        if (errors.length) {
+          showCompareError(errors.join(' '));
+          return;
+        }
+
+        if (scenarios.length === 0) {
+          showCompareError('Add at least one scenario to compare.');
+          return;
+        }
+
+        var maxDisbursed = Math.max.apply(
+          null,
+          scenarios.map(function (x) {
+            return x.disbursed;
+          })
+        );
+        var minInterest = Math.min.apply(
+          null,
+          scenarios.map(function (x) {
+            return x.interest;
+          })
+        );
+
+        resultsGrid.innerHTML = '';
+
+        scenarios.forEach(function (sc) {
+          var isMaxDisbursed = sc.disbursed >= maxDisbursed - 1e-9;
+          var isMinInterest = sc.interest <= minInterest + 1e-9;
+
+          var card = document.createElement('div');
+          card.className =
+            'flex flex-col rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-50/90 p-4 shadow-sm transition-all duration-200 hover:shadow-md';
+
+          var badges = document.createElement('div');
+          badges.className = 'mb-3 flex min-h-[1.5rem] flex-wrap gap-2';
+          if (isMaxDisbursed) {
+            var b1 = document.createElement('span');
+            b1.className =
+              'rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800';
+            b1.textContent = 'Highest disbursed';
+            badges.appendChild(b1);
+          }
+          if (isMinInterest) {
+            var b2 = document.createElement('span');
+            b2.className =
+              'rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-800';
+            b2.textContent = 'Lowest interest';
+            badges.appendChild(b2);
+          }
+          card.appendChild(badges);
+
+          var h = document.createElement('p');
+          h.className = 'text-sm font-semibold text-slate-900';
+          h.textContent = 'Scenario ' + sc.num;
+          card.appendChild(h);
+
+          var dl = document.createElement('dl');
+          dl.className = 'mt-3 space-y-2 text-sm';
+
+          function addLine(dt, dd, ddClass) {
+            var row = document.createElement('div');
+            row.className = 'flex justify-between gap-3 border-b border-slate-200/80 py-1.5 last:border-0';
+            var dtt = document.createElement('dt');
+            dtt.className = 'text-slate-500';
+            dtt.textContent = dt;
+            var ddd = document.createElement('dd');
+            ddd.className =
+              'text-right font-medium tabular-nums text-slate-900 ' + (ddClass || '');
+            ddd.textContent = dd;
+            row.appendChild(dtt);
+            row.appendChild(ddd);
+            dl.appendChild(row);
+          }
+
+          addLine('Sanction', formatCompareCurrency(sc.sanction));
+          var roiStr =
+            Math.abs(sc.roi - Math.round(sc.roi)) < 1e-9
+              ? String(Math.round(sc.roi))
+              : String(sc.roi);
+          var tenStr =
+            Math.abs(sc.tenure - Math.round(sc.tenure)) < 1e-9
+              ? String(Math.round(sc.tenure))
+              : String(sc.tenure);
+          addLine('ROI / Tenure', roiStr + '% / ' + tenStr + 'd');
+          addLine('Disbursed', formatCompareCurrency(sc.disbursed), 'text-green-600');
+          addLine('Interest', formatCompareCurrency(sc.interest), 'text-orange-600');
+
+          card.appendChild(dl);
+          resultsGrid.appendChild(card);
+        });
+
+        resultsSection.classList.remove('hidden');
+      }
+
+      addBtn.addEventListener('click', addScenario);
+      runBtn.addEventListener('click', runCompare);
+
+      addScenario();
+    })();
+  </script>
+</body>
+</html>
